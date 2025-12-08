@@ -1,65 +1,91 @@
-import Image from "next/image";
+import { Header } from "@/components/header"
+import { HeroBanner } from "@/components/hero-banner"
+import { ProductCard } from "@/components/product-card"
+
+const products = [
+  {
+    id: 1,
+    name: "Minimalist Lounge Chair",
+    price: 599,
+    category: "Furniture",
+    image: "/images/modern-beige-lounge-chair.jpg",
+  },
+  {
+    id: 2,
+    name: "Ceramic Vase Set",
+    price: 89,
+    category: "Decor",
+    image: "/images/minimalist-ceramic-vase-set.png",
+  },
+  {
+    id: 3,
+    name: "Wooden Side Table",
+    price: 249,
+    category: "Furniture",
+    image: "/images/modern-wooden-side-table.jpg",
+  },
+  {
+    id: 4,
+    name: "Textured Throw Pillow",
+    price: 45,
+    category: "Textiles",
+    image: "/images/modern-textured-throw-pillow.jpg",
+  },
+  {
+    id: 5,
+    name: "Abstract Wall Art",
+    price: 179,
+    category: "Art",
+    image: "/images/abstract-modern-wall-art.jpg",
+  },
+  {
+    id: 6,
+    name: "Sculptural Floor Lamp",
+    price: 329,
+    category: "Lighting",
+    image: "/images/modern-sculptural-floor-lamp.jpg",
+  },
+  {
+    id: 7,
+    name: "Linen Bedding Set",
+    price: 159,
+    category: "Textiles",
+    image: "/images/natural-linen-bedding-set.jpg",
+  },
+  {
+    id: 8,
+    name: "Modern Console Table",
+    price: 449,
+    category: "Furniture",
+    image: "/images/modern-console-table-wood.jpg",
+  },
+]
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen">
+      <HeroBanner />
+
+      <main className="container mx-auto px-4 py-12 md:py-16">
+        <div className="mb-12">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 text-balance">Featured Products</h2>
+          <p className="text-muted-foreground text-lg text-pretty">
+            Explore our curated selection of contemporary pieces
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              name={product.name}
+              price={product.price}
+              category={product.category}
+              image={product.image}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
       </main>
     </div>
-  );
+  )
 }
