@@ -8,9 +8,10 @@ interface ProductCardProps {
   price: number
   image: string
   category: string
+  desc: string
 }
 
-export function ProductCard({ name, price, image, category }: ProductCardProps) {
+export function ProductCard({ name, price, image, category, desc }: ProductCardProps) {
   return (
     <Card className="group overflow-hidden border-border hover:shadow-lg transition-all duration-300">
       <CardContent className="p-0">
@@ -27,6 +28,7 @@ export function ProductCard({ name, price, image, category }: ProductCardProps) 
         <div className="w-full">
           <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{category}</p>
           <h3 className="font-medium text-lg mb-2 text-balance">{name}</h3>
+          <p>{desc}</p>
           <p className="text-xl font-semibold">${price.toFixed(2)}</p>
         </div>
         <Button className="w-full bg-transparent" variant="outline">
