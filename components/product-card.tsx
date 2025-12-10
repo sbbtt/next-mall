@@ -1,17 +1,17 @@
+'use client'
 import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart } from "lucide-react"
+import { useCartStore } from "@/lib/store/useCartStore"
+import {Product} from "@/lib/data/products"
 
 interface ProductCardProps {
-  name: string
-  price: number
-  image: string
-  category: string
-  desc: string
+  product: Product
 }
-
-export function ProductCard({ name, price, image, category, desc }: ProductCardProps) {
+export function ProductCard({ product }: ProductCardProps) {
+  const additem = useCartStore(state=>state.addItem)
+  const {name, price, image, category, desc} = product;
   return (
     <Card className="group overflow-hidden border-border hover:shadow-lg transition-all duration-300">
       <CardContent className="p-0">
@@ -32,7 +32,7 @@ export function ProductCard({ name, price, image, category, desc }: ProductCardP
           <p className="text-xl font-semibold">${price.toFixed(2)}</p>
         </div>
         <Button className="w-full bg-transparent" variant="outline">
-          <ShoppingCart className="mr-2 h-4 w-4" />
+          <ShoppingCart className="mr-2 h-4 w-4" onClick={()=>{}}/>
           Add to Cart
         </Button>
       </CardFooter>

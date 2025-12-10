@@ -1,65 +1,7 @@
 import { Header } from "@/components/header"
 import { HeroBanner } from "@/components/hero-banner"
 import { ProductCard } from "@/components/product-card"
-
-const products = [
-  {
-    id: 1,
-    name: "Minimalist Lounge Chair",
-    price: 599,
-    category: "Furniture",
-    image: "/images/modern-beige-lounge-chair.jpg",
-  },
-  {
-    id: 2,
-    name: "Ceramic Vase Set",
-    price: 89,
-    category: "Decor",
-    image: "/images/minimalist-ceramic-vase-set.png",
-  },
-  {
-    id: 3,
-    name: "Wooden Side Table",
-    price: 249,
-    category: "Furniture",
-    image: "/images/modern-wooden-side-table.jpg",
-  },
-  {
-    id: 4,
-    name: "Textured Throw Pillow",
-    price: 45,
-    category: "Textiles",
-    image: "/images/modern-textured-throw-pillow.jpg",
-  },
-  {
-    id: 5,
-    name: "Abstract Wall Art",
-    price: 179,
-    category: "Art",
-    image: "/images/abstract-modern-wall-art.jpg",
-  },
-  {
-    id: 6,
-    name: "Sculptural Floor Lamp",
-    price: 329,
-    category: "Lighting",
-    image: "/images/modern-sculptural-floor-lamp.jpg",
-  },
-  {
-    id: 7,
-    name: "Linen Bedding Set",
-    price: 159,
-    category: "Textiles",
-    image: "/images/natural-linen-bedding-set.jpg",
-  },
-  {
-    id: 8,
-    name: "Modern Console Table",
-    price: 449,
-    category: "Furniture",
-    image: "/images/modern-console-table-wood.jpg",
-  },
-]
+import { products } from "@/lib/data/products"
 
 export default function Home() {
   return (
@@ -78,10 +20,7 @@ export default function Home() {
           {products.map((product) => (
             <ProductCard
               key={product.id}
-              name={product.name}
-              price={product.price}
-              category={product.category}
-              image={product.image}
+              product={product}
             />
           ))}
         </div>
