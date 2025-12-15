@@ -3,16 +3,18 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Search, ShoppingCart, Menu, X } from "lucide-react"
+import dynamic from "next/dynamic"
+import { Search, ShoppingCart, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { useCartStore, getTotalItems } from "@/lib/store/useCartStore"
 
+// Dynamic import: 클라이언트에서만 렌더링
+const MobileMenu = dynamic(() => import("./mobile-menu"), { ssr: false })
+
 export function Header() {
   const router = useRouter()
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const cartItemCount = useCartStore(getTotalItems)
   
@@ -20,7 +22,6 @@ export function Header() {
     e.preventDefault()
     if (searchValue.trim()) {
       router.push(`/shop?search=${encodeURIComponent(searchValue.trim())}`)
-      setIsSearchOpen(false)
       setSearchValue('')
     }
   }
@@ -48,36 +49,19 @@ export function Header() {
 
         {/* Search & Cart */}
         <div className="flex items-center gap-2">
-          {/* Desktop Search */}
-          <div className="hidden md:flex items-center">
-            {isSearchOpen ? (
-              <form onSubmit={handleSearch} className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4">
-                <Input 
-                  type="search" 
-                  placeholder="Search products..." 
-                  className="w-[200px] lg:w-[300px]" 
-                  autoFocus 
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(false)}>
-                  <X className="h-5 w-5" />
-                  <span className="sr-only">Close search</span>
-                </Button>
-              </form>
-            ) : (
-              <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
-                <Search className="h-5 w-5" />
-                <span className="sr-only">Search</span>
-              </Button>
-            )}
-          </div>
-
-          {/* Mobile Search */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Search</span>
-          </Button>
+          {/* Desktop Search - Always Visible */}
+          <form onSubmit={handleSearch} className="hidden md:block">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input 
+                type="search" 
+                placeholder="Search products..." 
+                className="w-[180px] lg:w-[240px] pl-9 h-9" 
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </div>
+          </form>
 
           {/* Cart */}
           <Button variant="ghost" size="icon" className="relative" asChild>
@@ -95,45 +79,10 @@ export function Header() {
             </Link>
           </Button>
 
-          {/* Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <nav className="flex flex-col space-y-4 mt-8">
-                <Link href="/shop" className="text-lg font-medium transition-colors hover:text-accent">
-                  Shop
-                </Link>
-                <Link href="/about" className="text-lg font-medium transition-colors hover:text-accent">
-                  About
-                </Link>
-                <Link href="/contact" className="text-lg font-medium transition-colors hover:text-accent">
-                  Contact
-                </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
+          {/* Mobile Menu - CSR Only */}
+          <MobileMenu searchValue={searchValue} setSearchValue={setSearchValue} onSearch={handleSearch} />
         </div>
       </div>
-
-      {/* Mobile Search Bar */}
-      {isSearchOpen && (
-        <div className="md:hidden border-t border-border p-4 animate-in fade-in slide-in-from-top-2">
-          <form onSubmit={handleSearch}>
-            <Input 
-              type="search" 
-              placeholder="Search products..." 
-              className="w-full" 
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-          </form>
-        </div>
-      )}
     </header>
   )
 }

@@ -2,12 +2,14 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition, useEffect, useCallback } from 'react'
-import { ShopFilters } from '@/components/shop-filters'
+import dynamic from 'next/dynamic'
+
+// Dynamic import: 클라이언트에서만 렌더링
+const FilterSheet = dynamic(() => import('./filter-sheet'), { ssr: false })
 
 const categories = [
   { value: 'furniture', label: 'Furniture' },
@@ -69,26 +71,12 @@ export function ShopHeader({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        {/* Mobile Filter Button */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" className="lg:hidden shrink-0 h-9 px-3">
-              <SlidersHorizontal className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px] overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Filters</SheetTitle>
-            </SheetHeader>
-            <div className="mt-6">
-              <ShopFilters
-                currentCategory={currentCategory}
-                currentMinPrice={currentMinPrice}
-                currentMaxPrice={currentMaxPrice}
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
+        {/* Mobile Filter Button - CSR Only */}
+        <FilterSheet
+          currentCategory={currentCategory}
+          currentMinPrice={currentMinPrice}
+          currentMaxPrice={currentMaxPrice}
+        />
 
         {/* Search */}
         <div className="relative flex-1 min-w-0">
