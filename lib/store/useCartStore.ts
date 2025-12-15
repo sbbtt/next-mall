@@ -11,8 +11,16 @@ interface CartState {
   items: CartItem[];
   addItem: (product: Product) => void;
   removeItem: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
 }
+
+// Selectors (외부에서 사용)
+export const getTotalPrice = (state: CartState) =>
+  state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+export const getTotalItems = (state: CartState) =>
+  state.items.reduce((total, item) => total + item.quantity, 0);
 
 export const useCartStore = create<CartState>()(
   persist(
@@ -37,6 +45,12 @@ export const useCartStore = create<CartState>()(
       removeItem: (id) =>
         set((state) => ({
           items: state.items.filter((item) => item.id !== id),
+        })),
+      updateQuantity: (id, quantity) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+          ),
         })),
       clearCart: () => set({ items: [] }),
     }),

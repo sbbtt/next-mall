@@ -2,15 +2,28 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Search, ShoppingCart, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { useCartStore, getTotalItems } from "@/lib/store/useCartStore"
 
 export function Header() {
+  const router = useRouter()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const cartItemCount = 3
+  const [searchValue, setSearchValue] = useState('')
+  const cartItemCount = useCartStore(getTotalItems)
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchValue.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchValue.trim())}`)
+      setIsSearchOpen(false)
+      setSearchValue('')
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -38,13 +51,20 @@ export function Header() {
           {/* Desktop Search */}
           <div className="hidden md:flex items-center">
             {isSearchOpen ? (
-              <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4">
-                <Input type="search" placeholder="Search products..." className="w-[200px] lg:w-[300px]" autoFocus />
+              <form onSubmit={handleSearch} className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4">
+                <Input 
+                  type="search" 
+                  placeholder="Search products..." 
+                  className="w-[200px] lg:w-[300px]" 
+                  autoFocus 
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
                 <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(false)}>
                   <X className="h-5 w-5" />
                   <span className="sr-only">Close search</span>
                 </Button>
-              </div>
+              </form>
             ) : (
               <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
                 <Search className="h-5 w-5" />
@@ -60,17 +80,19 @@ export function Header() {
           </Button>
 
           {/* Cart */}
-          <Button variant="ghost" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {cartItemCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-              >
-                {cartItemCount}
-              </Badge>
-            )}
-            <span className="sr-only">Shopping cart</span>
+          <Button variant="ghost" size="icon" className="relative" asChild>
+            <Link href="/cart">
+              <ShoppingCart className="h-5 w-5" />
+              {cartItemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {cartItemCount}
+                </Badge>
+              )}
+              <span className="sr-only">Shopping cart</span>
+            </Link>
           </Button>
 
           {/* Mobile Menu */}
@@ -101,7 +123,15 @@ export function Header() {
       {/* Mobile Search Bar */}
       {isSearchOpen && (
         <div className="md:hidden border-t border-border p-4 animate-in fade-in slide-in-from-top-2">
-          <Input type="search" placeholder="Search products..." className="w-full" />
+          <form onSubmit={handleSearch}>
+            <Input 
+              type="search" 
+              placeholder="Search products..." 
+              className="w-full" 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+          </form>
         </div>
       )}
     </header>
