@@ -17,6 +17,9 @@ type SearchParams = {
   sort?: string;
 }
 
+const validCategories = ['furniture', 'lighting', 'decor', 'outdoor'];
+const validSorts = ['default', 'price-asc', 'price-desc', 'name-asc', 'name-desc'];
+
 export default async function page({searchParams}:{searchParams: Promise<SearchParams>}) {
   const params = await searchParams;
   const {
@@ -28,27 +31,34 @@ export default async function page({searchParams}:{searchParams: Promise<SearchP
     sort = 'default'
   } = params;
   
+  // 보안: 입력 검증
+  const validatedSearch = search.slice(0, 100); // 최대 100자
+  const validatedCategory = category && validCategories.includes(category) ? category : '';
+  const validatedMinPrice = Math.max(0, Math.min(Number(minPrice) || 0, 700000));
+  const validatedMaxPrice = Math.max(0, Math.min(Number(maxPrice) || 700000, 700000));
+  const validatedSort = sort && validSorts.includes(sort) ? sort : 'default';
+  
   const currentPage = Number(page);
   
   // 필터링
   let filteredProducts = products.filter((product) => {
     // 검색어 필터
-    const searchLower = search.toLowerCase();
-    const matchesSearch = !search || 
+    const searchLower = validatedSearch.toLowerCase();
+    const matchesSearch = !validatedSearch || 
       product.name.toLowerCase().includes(searchLower) ||
       product.description.toLowerCase().includes(searchLower);
     
     // 카테고리 필터
-    const matchesCategory = !category || product.category === category;
+    const matchesCategory = !validatedCategory || product.category === validatedCategory;
     
     // 가격 필터
-    const matchesPrice = product.price >= Number(minPrice) && product.price <= Number(maxPrice);
+    const matchesPrice = product.price >= validatedMinPrice && product.price <= validatedMaxPrice;
     
     return matchesSearch && matchesCategory && matchesPrice;
   });
   
   // 정렬
-  switch (sort) {
+  switch (validatedSort) {
     case 'price-asc':
       filteredProducts.sort((a, b) => a.price - b.price);
       break;
@@ -96,21 +106,21 @@ export default async function page({searchParams}:{searchParams: Promise<SearchP
 
         {/* Header with Search and Sort */}
         <ShopHeader 
-          currentSort={sort}
+          currentSort={validatedSort}
           totalProducts={totalProducts}
-          currentSearch={search}
-          currentCategory={category}
-          currentMinPrice={Number(minPrice)}
-          currentMaxPrice={Number(maxPrice)}
+          currentSearch={validatedSearch}
+          currentCategory={validatedCategory}
+          currentMinPrice={validatedMinPrice}
+          currentMaxPrice={validatedMaxPrice}
         />
 
         <div className="flex gap-6 mt-6">
           {/* Desktop Sidebar Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <ShopFilters
-              currentCategory={category}
-              currentMinPrice={Number(minPrice)}
-              currentMaxPrice={Number(maxPrice)}
+              currentCategory={validatedCategory}
+              currentMinPrice={validatedMinPrice}
+              currentMaxPrice={validatedMaxPrice}
             />
           </aside>
 

@@ -136,7 +136,7 @@ export function ShopHeader({
             <div className="flex flex-wrap items-center gap-2">
               {currentCategory && (
                 <Badge variant="secondary" className="gap-1 h-6">
-                  {categories.find(c => c.value === currentCategory)?.label || currentCategory}
+                  {categories.find(c => c.value === currentCategory)?.label || 'Category'}
                   <button
                     onClick={() => updateUrl('category', '')}
                     className="hover:bg-muted rounded-full p-0.5"
