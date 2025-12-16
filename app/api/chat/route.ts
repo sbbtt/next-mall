@@ -17,6 +17,37 @@ export async function POST(req: NextRequest) {
     // 최신 사용자 메시지 추출
     const userMessage = messages[messages.length - 1]?.text || ''
 
+    // 쇼핑 관련 키워드 체크 (간단한 필터)
+    const shoppingKeywords = [
+      '가구', '소파', '의자', '테이블', '침대', '수납', '책상', '식탁',
+      '조명', '램프', '전등', '스탠드',
+      '데코', '인테리어', '장식', '거울', '화병', '쿠션',
+      '아웃도어', '정원', '야외',
+      'furniture', 'sofa', 'chair', 'table', 'bed', 'desk',
+      'light', 'lamp', 'lighting',
+      'decor', 'mirror', 'vase',
+      '추천', '찾', '보여', '구매', '가격', '얼마', '저렴', '비싼'
+    ]
+    
+    const hasShoppingKeyword = shoppingKeywords.some(keyword => 
+      userMessage.toLowerCase().includes(keyword)
+    )
+    
+    // 명백히 쇼핑과 무관한 질문 (날씨, 수학, 일반 지식 등)
+    if (!hasShoppingKeyword && userMessage.length > 0) {
+      const offTopicKeywords = ['날씨', '시간', '계산', '수학', '뉴스', '정치', 'weather', 'time', 'news']
+      const isOffTopic = offTopicKeywords.some(keyword => 
+        userMessage.toLowerCase().includes(keyword)
+      )
+      
+      if (isOffTopic) {
+        return NextResponse.json({
+          message: '죄송합니다. 저는 가구, 조명, 인테리어 제품 추천만 도와드릴 수 있어요. 어떤 제품을 찾고 계신가요?',
+          products: []
+        })
+      }
+    }
+
     // 제품 카탈로그 (카테고리별)
     const productsByCategory = {
       furniture: products.filter(p => p.category === 'furniture'),
@@ -33,7 +64,8 @@ export async function POST(req: NextRequest) {
     // 쇼핑 어시스턴트 프롬프트
     const systemPrompt = `너는 STORE 쇼핑몰의 AI 어시스턴트야.
 
-사용자 요청에 맞는 제품을 아래 목록에서 찾아서 JSON으로 응답해.
+중요: 너는 오직 가구, 조명, 데코, 아웃도어 제품 추천만 할 수 있어.
+쇼핑과 관련 없는 질문(날씨, 수학, 일반 상식 등)에는 답변하지 마.
 
 제품 목록:
 ${catalogText}
@@ -46,10 +78,17 @@ ${catalogText}
 2. description은 한국어로 15자 이내
 3. 최대 3개 제품 추천
 4. 식탁=Dining Table, 커피테이블=Coffee Table, 소파=Sofa, 조명=Lamp/Light
+5. 쇼핑 관련 없는 질문이면 products를 빈 배열로 하고 text에 안내 메시지
 
 예시:
 고객: "식탁"
 응답: {"text": "식탁 추천이에요!", "products": [{"id": 20, "description": "야외용 다이닝 테이블"}]}
+
+고객: "날씨 알려줘" (쇼핑 무관)
+응답: {"text": "죄송합니다. 저는 가구/조명/인테리어 제품 추천만 도와드릴 수 있어요.", "products": []}
+
+고객: "10만원대 의자"
+응답: {"text": "예산에 맞는 의자 찾았어요!", "products": [{"id": 5, "description": "편안한 식탁 의자"}]}
 `
 
     // 대화 컨텍스트 구성
