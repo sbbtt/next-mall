@@ -97,39 +97,3 @@ const validCategories = ['furniture', 'lighting', 'decor', 'outdoor']
 const validatedCategory = category && validCategories.includes(category) ? category : ''
 ```
 화이트리스트 방식으로 허용된 값만 처리하여 보안을 강화했습니다.
-
-## Getting Started
-
-### 환경 변수 설정
-`.env.local` 파일을 생성하고 다음 변수를 추가하세요:
-```
-GEMINI_API_KEY=your_google_gemini_api_key_here
-```
-
-### 설치 및 실행
-```bash
-npm install
-npm run dev
-```
-
-개발 서버는 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
-
-## Project Structure
-```
-next-mall/
-├── app/
-│   ├── api/chat/          # Gemini API 라우트
-│   ├── shop/              # 제품 목록 및 상세
-│   └── cart/              # 장바구니 페이지
-├── components/
-│   ├── ui/                # shadcn/ui 컴포넌트
-│   ├── shopping-assistant.tsx  # AI 챗봇
-│   └── shop-*.tsx         # 검색/필터 컴포넌트
-└── lib/
-    ├── data/products.ts   # 제품 데이터
-    └── store/             # Zustand 스토어
-```
-
-## Deployed URL
-
-- 개발 진행 단계로, 배포 전입니다.
