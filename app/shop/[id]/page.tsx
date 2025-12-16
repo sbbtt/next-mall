@@ -52,7 +52,7 @@ export default async function ProductDetailPage({
               <p className="text-sm text-muted-foreground uppercase tracking-wide">{product.category}</p>
             </div>
             <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4">{product.name}</h1>
-            <p className="text-3xl font-semibold mb-6">${Math.floor(product.price).toLocaleString()}</p>
+            <p className="text-3xl font-semibold mb-6">{Math.floor(product.price).toLocaleString()}원</p>
 
             {product.inStock ? (
               <div className="flex items-center gap-2 mb-6 text-green-600">
@@ -119,7 +119,7 @@ export default async function ProductDetailPage({
                     <div>
                       <p className="font-medium mb-1">Shipping</p>
                       <p className="text-sm text-muted-foreground">
-                        Free shipping on orders over $500. Standard delivery in 5-7 business days.
+                        50만원 이상 구매 시 무료 배송. 일반 배송 5-7일 소요.
                       </p>
                     </div>
                   </CardContent>

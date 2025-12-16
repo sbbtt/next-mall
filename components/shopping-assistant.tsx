@@ -203,7 +203,7 @@ export function ShoppingAssistant() {
                                     {product.name}
                                   </p>
                                   <p className="text-base font-semibold text-primary">
-                                    ${Math.floor(product.price).toLocaleString()}
+                                    {Math.floor(product.price).toLocaleString()}원
                                   </p>
                                 </div>
                               </div>

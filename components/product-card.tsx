@@ -55,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <p className="text-xs text-muted-foreground uppercase tracking-wide">{category}</p>
             <h3 className="font-medium text-lg line-clamp-2 min-h-[3.5rem]">{name}</h3>
             <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">{description}</p>
-            <p className="text-xl font-semibold">${Math.floor(price).toLocaleString()}</p>
+            <p className="text-xl font-semibold">{Math.floor(price).toLocaleString()}원</p>
           </div>
           <Button 
             className="w-full bg-transparent" 

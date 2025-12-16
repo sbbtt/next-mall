@@ -121,10 +121,10 @@ export default function CartPage() {
 
                       {/* Price */}
                       <div className="text-right">
-                        <p className="font-semibold">${Math.floor(item.price * item.quantity).toLocaleString()}</p>
+                        <p className="font-semibold">{Math.floor(item.price * item.quantity).toLocaleString()}원</p>
                         {item.quantity > 1 && (
                           <p className="text-xs text-muted-foreground">
-                            ${Math.floor(item.price).toLocaleString()} (1EA 가격)
+                            {Math.floor(item.price).toLocaleString()}원 (1EA 가격)
                           </p>
                         )}
                       </div>
@@ -154,7 +154,7 @@ export default function CartPage() {
                 <Separator />
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">소계</span>
-                  <span className="font-medium">${Math.floor(totalPrice).toLocaleString()}</span>
+                  <span className="font-medium">{Math.floor(totalPrice).toLocaleString()}원</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">배송비</span>
@@ -163,7 +163,7 @@ export default function CartPage() {
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>총 금액</span>
-                  <span>${Math.floor(totalPrice).toLocaleString()}</span>
+                  <span>{Math.floor(totalPrice).toLocaleString()}원</span>
                 </div>
               </div>
 

@@ -103,7 +103,7 @@ export function ShopFilters({ currentCategory, currentMinPrice, currentMaxPrice 
           )}
           {(currentMinPrice > 0 || currentMaxPrice < 700000) && (
             <Badge variant="secondary" className="gap-1">
-              ${Math.floor(currentMinPrice).toLocaleString()} - ${Math.floor(currentMaxPrice).toLocaleString()}
+              {Math.floor(currentMinPrice).toLocaleString()}원 - {Math.floor(currentMaxPrice).toLocaleString()}원
               <X 
                 className="h-3 w-3 cursor-pointer" 
                 onClick={() => updateUrl({ minPrice: null, maxPrice: null })}
@@ -148,8 +148,8 @@ export function ShopFilters({ currentCategory, currentMinPrice, currentMaxPrice 
             className="w-full"
           />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>${Math.floor(priceRange[0]).toLocaleString()}</span>
-            <span>${Math.floor(priceRange[1]).toLocaleString()}</span>
+            <span>{Math.floor(priceRange[0]).toLocaleString()}원</span>
+            <span>{Math.floor(priceRange[1]).toLocaleString()}원</span>
           </div>
           {(priceRange[0] !== currentMinPrice || priceRange[1] !== currentMaxPrice) && (
             <Button 
