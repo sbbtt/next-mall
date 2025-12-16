@@ -8,7 +8,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useTransition, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 
-// Dynamic import: 클라이언트에서만 렌더링
 const FilterSheet = dynamic(() => import('./filter-sheet'), { ssr: false })
 
 const categories = [

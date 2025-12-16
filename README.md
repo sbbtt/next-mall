@@ -4,48 +4,131 @@
 ## Tech Stack
 
 ### Core
-- Next.js (App Router): 초기 로딩 성능과 SEO 향상을 위해 리액트 서버 컴포넌트(React Server Components)를 활용했습니다.
+- Next.js 16 (App Router): 초기 로딩 성능과 SEO 향상을 위해 리액트 서버 컴포넌트(React Server Components)를 활용했습니다.
 - TypeScript: 더 나은 유지보수성과 오류 방지를 위해 정적 타이핑을 적용했습니다.
 - Vercel: CI/CD 파이프라인 구축 및 호스팅 환경으로 사용됩니다.
 
 ### State Management & Data Fetching
-- TanStack Query (React Query): 비동기 서버 상태, 캐싱, 그리고 백그라운드 업데이트를 관리합니다.
-- Zustand: UI 상호작용(예: 장바구니, 모달 등)을 위한 가벼운 클라이언트 측 전역 상태 관리 라이브러리입니다.
+- Zustand: 장바구니 상태 관리를 위한 가벼운 전역 상태 관리 라이브러리입니다. persist 미들웨어를 활용해 localStorage에 상태를 저장합니다.
 
-### Backend & Database
-- Supabase: 관리형 Postgres 데이터베이스 및 인증 서비스를 제공합니다.
+### Backend & AI
+- Google Gemini API: AI 기반 쇼핑 어시스턴트 챗봇을 위한 대화형 AI 모델입니다.
 
 ## Design & UI Implementation
 
 - v0 & shadcn/ui: v0를 활용하여 초기 디자인과 퍼블리싱을 진행하였으며, 프로젝트 요구사항에 맞춰 컴포넌트 구조를 재설계 및 최적화하였습니다. 재사용 가능한 컴포넌트 시스템 구축을 위해 shadcn/ui를 적극 활용했습니다.
+- Tailwind CSS: 유틸리티 기반의 CSS 프레임워크로 반응형 디자인을 구현했습니다.
 
 ### Security
-- React Flight 보안 이슈 대응: React Server Components의 직렬화 과정에서 발생할 수 있는 보안 취약점을 인지하고 있습니다.
-- React Server Components 직렬화 보안 이슈에 대응하여 최신 버전 업데이트를 적용했습니다. 추가적으로 DB 데이터를 클라이언트로 전달할 때 엔티티 전체를 넘기지 않고 필요한 데이터만 선별하여 전달하는 방식으로 잠재적인 데이터 노출 위험을 최소화했습니다.
-
+- React Server Components 직렬화 보안 이슈에 대응하여 최신 버전 업데이트를 적용했습니다.
+- URL 파라미터 검증: 사용자 입력값(카테고리, 가격, 정렬, 검색어)을 서버 측에서 검증하여 XSS 및 DoS 공격을 방어합니다.
 
 ## Key Features & Technical Challenges
 
-### Core Features
-- 상품 목록 및 상세 페이지를 위한 서버 사이드 렌더링(SSR).
-- 장바구니 기능을 위한 클라이언트 측 상태 관리.
-- 더 나은 사용자 경험을 위한 낙관적 UI(Optimistic UI) 업데이트.
-- Tailwind CSS를 활용한 반응형 디자인.
+### 구현된 핵심 기능
 
-### Authentication & Social Login
-- Supabase Auth를 활용한 사용자 인증 시스템.
-- 소셜 로그인 (Google, GitHub 등) 통합 및 세션 관리.
-- JWT 기반 토큰 인증 및 보안 처리.
+#### 1. AI 쇼핑 어시스턴트
+- Google Gemini API를 활용한 대화형 챗봇
+- 사용자 요청에 맞는 실시간 제품 추천
+- 자연어 처리로 한국어-영어 키워드 매핑 (예: "식탁" → "Dining Table")
+- 제품 카드 UI로 시각적 추천 제공
 
-### Advanced UI/UX Implementation
-- 무한 스크롤 (Infinite Scroll):
-  - 상품 리스트 로딩 시 Intersection Observer API를 활용한 데이터 페칭 최적화.
-- 자동 완성 검색 (Auto-complete):
-  - 검색 API 호출 최적화를 위한 Debounce 처리 및 사용자 친화적인 드롭다운 UI 구현.
-- 커스텀 캐러셀 (Carousel):
-  - 외부 라이브러리 의존성을 줄이기 위해 CSS transform과 JavaScript로 직접 구현한 배너/상품 슬라이더.
-- 다크 모드 (Dark Mode):
-  - CSS 변수와 Context API를 활용한 시스템 테마 감지 및 테마 전환 기능.
+#### 2. 제품 검색 및 필터링
+- 실시간 검색 (debounce 1초 적용)
+- 카테고리별 필터 (가구, 조명, 데코, 아웃도어)
+- 가격 범위 필터 (Slider UI)
+- 다중 정렬 옵션 (가격, 이름 오름차순/내림차순)
+- URL 파라미터 기반 상태 관리로 북마크 및 공유 가능
+
+#### 3. 장바구니 시스템
+- Zustand persist 미들웨어로 localStorage 동기화
+- 수량 조절, 개별 삭제, 전체 삭제 기능
+- 실시간 총액 계산 및 상품 개수 표시
+- Toast 알림으로 사용자 피드백 제공
+
+#### 4. 제품 상세 페이지
+- SSR로 SEO 최적화
+- 이미지 로딩 Skeleton UI
+- Fallback 이미지 처리 (404 대응)
+- 반응형 2단 레이아웃
+
+#### 5. 페이지네이션
+- 페이지당 8개 상품 표시
+- URL 파라미터 기반 페이지 상태 관리
+
+### 기술적 도전과제 및 해결
+
+#### 1. Hydration Mismatch 해결
+**문제**: Radix UI의 Sheet 컴포넌트에서 서버/클라이언트 간 ID 불일치로 hydration 에러 발생
+
+**해결**: Dynamic Import with `ssr: false` 적용
+```typescript
+const MobileMenu = dynamic(() => import('./mobile-menu'), { ssr: false })
+```
+클라이언트에서만 렌더링하여 SSR 관련 hydration 문제를 원천 차단했습니다.
+
+#### 2. 템플릿 리터럴 파싱 이슈
+**문제**: AI 프롬프트 작성 시 템플릿 리터럴 내부에 특수문자(화살표 `→`, 불릿 등)를 사용하면 TypeScript 파서 오류 발생
+
+**해결**: 특수문자를 단순 기호로 대체
+```typescript
+// ❌ 파싱 에러 발생
+`- 식탁 → Dining Table`
+
+// ✅ 정상 작동
+`- 식탁 = Dining Table`
+```
+템플릿 리터럴 내에서는 ASCII 기호만 사용하여 안정성을 확보했습니다.
+
+#### 3. 이미지 로딩 최적화
+**문제**: Unsplash API 이미지 일부가 404 에러 발생
+
+**해결**: 
+- `onError` 핸들러로 fallback 이미지 처리
+- Skeleton UI로 로딩 상태 시각화
+- `ProductImage` 컴포넌트로 재사용성 향상
+
+#### 4. URL 파라미터 검증
+**문제**: 사용자가 임의로 URL을 조작하여 잘못된 값 입력 가능
+
+**해결**: 서버 측 검증 로직 구현
+```typescript
+const validCategories = ['furniture', 'lighting', 'decor', 'outdoor']
+const validatedCategory = category && validCategories.includes(category) ? category : ''
+```
+화이트리스트 방식으로 허용된 값만 처리하여 보안을 강화했습니다.
+
+## Getting Started
+
+### 환경 변수 설정
+`.env.local` 파일을 생성하고 다음 변수를 추가하세요:
+```
+GEMINI_API_KEY=your_google_gemini_api_key_here
+```
+
+### 설치 및 실행
+```bash
+npm install
+npm run dev
+```
+
+개발 서버는 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
+
+## Project Structure
+```
+next-mall/
+├── app/
+│   ├── api/chat/          # Gemini API 라우트
+│   ├── shop/              # 제품 목록 및 상세
+│   └── cart/              # 장바구니 페이지
+├── components/
+│   ├── ui/                # shadcn/ui 컴포넌트
+│   ├── shopping-assistant.tsx  # AI 챗봇
+│   └── shop-*.tsx         # 검색/필터 컴포넌트
+└── lib/
+    ├── data/products.ts   # 제품 데이터
+    └── store/             # Zustand 스토어
+```
 
 ## Deployed URL
 
