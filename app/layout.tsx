@@ -7,6 +7,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/sonner"
 import { ShoppingAssistant } from "@/components/shopping-assistant"
+import { AuthProvider } from "@/lib/contexts/auth-context"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -42,13 +43,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased min-h-screen flex flex-col`}>
-        <Header/>
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer/>
-        <Toaster />
-        <ShoppingAssistant />
+        <AuthProvider>
+          <Header/>
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer/>
+          <Toaster />
+          <ShoppingAssistant />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

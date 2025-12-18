@@ -6,6 +6,7 @@ import { Check, ArrowLeft, Package, Ruler, Layers } from "lucide-react"
 import { getProductById, products } from "@/lib/data/products"
 import { ProductImage } from "@/components/product-image"
 import { AddToCartButton } from "@/components/add-to-cart-button"
+import { AddToWishlistButton } from "@/components/add-to-wishlist-button"
 
 export function generateStaticParams() {
   return products.map((product) => ({
@@ -67,7 +68,10 @@ export default async function ProductDetailPage({
 
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">{product.description}</p>
 
-            <AddToCartButton product={product} size="lg" className="w-full mb-8" />
+            <div className="flex gap-3 mb-8">
+              <AddToCartButton product={product} size="lg" className="flex-1" />
+              <AddToWishlistButton product={product} size="lg" />
+            </div>
 
             <Separator className="mb-8" />
 

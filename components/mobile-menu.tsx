@@ -53,4 +53,3 @@ export default function MobileMenu({ searchValue, setSearchValue, onSearch }: Mo
     </Sheet>
   )
 }
-

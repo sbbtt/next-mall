@@ -4,11 +4,19 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
-import { Search, ShoppingCart, Menu } from "lucide-react"
+import { Search, ShoppingCart, Heart, Menu, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { useCartStore, getTotalItems } from "@/lib/store/useCartStore"
+import { useWishlistStore, getTotalWishlistItems } from "@/lib/store/useWishlistStore"
+import { useAuth } from "@/lib/contexts/auth-context"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 // Dynamic import: 클라이언트에서만 렌더링
 const MobileMenu = dynamic(() => import("./mobile-menu"), { ssr: false })
@@ -17,6 +25,8 @@ export function Header() {
   const router = useRouter()
   const [searchValue, setSearchValue] = useState('')
   const cartItemCount = useCartStore(getTotalItems)
+  const wishlistItemCount = useWishlistStore(getTotalWishlistItems)
+  const { user, signInWithGoogle, signOut } = useAuth()
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,6 +73,22 @@ export function Header() {
             </div>
           </form>
 
+          {/* Wishlist */}
+          <Button variant="ghost" size="icon" className="relative" asChild>
+            <Link href="/wishlist">
+              <Heart className="h-5 w-5" />
+              {wishlistItemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                >
+                  {wishlistItemCount}
+                </Badge>
+              )}
+              <span className="sr-only">Wishlist</span>
+            </Link>
+          </Button>
+
           {/* Cart */}
           <Button variant="ghost" size="icon" className="relative" asChild>
             <Link href="/cart">
@@ -78,6 +104,36 @@ export function Header() {
               <span className="sr-only">Shopping cart</span>
             </Link>
           </Button>
+
+          {/* User Auth */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="hidden md:flex">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">User menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem disabled className="font-medium">
+                  {user.email}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  로그아웃
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button 
+              variant="default" 
+              size="sm" 
+              className="hidden md:flex"
+              onClick={() => signInWithGoogle()}
+            >
+              로그인
+            </Button>
+          )}
 
           {/* Mobile Menu - CSR Only */}
           <MobileMenu searchValue={searchValue} setSearchValue={setSearchValue} onSearch={handleSearch} />

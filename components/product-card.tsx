@@ -3,10 +3,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, Heart } from "lucide-react"
 import { useCartStore } from "@/lib/store/useCartStore"
+import { useWishlistStore } from "@/lib/store/useWishlistStore"
 import {Product} from "@/lib/data/products"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Skeleton } from "./ui/skeleton"
 import { toast } from "sonner"
 
@@ -15,9 +16,16 @@ interface ProductCardProps {
 }
 export function ProductCard({ product }: ProductCardProps) {
   const additem = useCartStore(state=>state.addItem)
+  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
   const {id, name, price, image, category, description} = product;
   const [imgError, setImgError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isWished, setIsWished] = useState(false)
+  
+  // 클라이언트에서만 찜 상태 확인 (Hydration mismatch 방지)
+  useEffect(() => {
+    setIsWished(isInWishlist(id))
+  }, [id, isInWishlist])
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault() // Link 이동 방지
@@ -27,6 +35,27 @@ export function ProductCard({ product }: ProductCardProps) {
       description: `${name}`,
       duration: 2000,
     })
+  }
+  
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (isWished) {
+      removeFromWishlist(id)
+      setIsWished(false)
+      toast.info('찜 목록에서 제거되었습니다', {
+        description: `${name}`,
+        duration: 2000,
+      })
+    } else {
+      addToWishlist(product)
+      setIsWished(true)
+      toast.success('찜 목록에 추가되었습니다', {
+        description: `${name}`,
+        duration: 2000,
+      })
+    }
   }
   
   const handleError = () => {
@@ -48,6 +77,22 @@ export function ProductCard({ product }: ProductCardProps) {
               onLoad={() => setIsLoading(false)}
               onError={handleError}
             />
+            {/* 찜하기 버튼 */}
+            <Button
+              size="icon"
+              variant="secondary"
+              className={`absolute top-3 right-3 z-20 rounded-full transition-all duration-300 ${
+                isWished 
+                  ? 'bg-red-500 hover:bg-red-600 text-white' 
+                  : 'bg-white/90 hover:bg-white text-gray-700'
+              }`}
+              onClick={handleToggleWishlist}
+              aria-label={isWished ? "찜 해제" : "찜하기"}
+            >
+              <Heart 
+                className={`h-4 w-4 transition-all ${isWished ? 'fill-current' : ''}`} 
+              />
+            </Button>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-3 p-4">
