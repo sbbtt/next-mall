@@ -64,54 +64,43 @@ export function ProductCard({ product }: ProductCardProps) {
   }
   
   return (
-    <Link href={`/shop/${id}`} className="block">
-      <Card className="group overflow-hidden border-border hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <CardContent className="p-0">
-          <div className="relative aspect-square overflow-hidden bg-muted">
-            {isLoading && <Skeleton className="absolute inset-0 z-10" />}
-            <Image
-              src={imgError ? "/placeholder-product.svg" : (image || "/placeholder-product.svg")}
-              alt={name}
-              fill
-              className={`object-cover transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'}`}
-              onLoad={() => setIsLoading(false)}
-              onError={handleError}
-            />
-            {/* 찜하기 버튼 */}
-            <Button
-              size="icon"
-              variant="secondary"
-              className={`absolute top-3 right-3 z-20 rounded-full transition-all duration-300 ${
-                isWished 
-                  ? 'bg-red-500 hover:bg-red-600 text-white' 
-                  : 'bg-white/90 hover:bg-white text-gray-700'
-              }`}
-              onClick={handleToggleWishlist}
-              aria-label={isWished ? "찜 해제" : "찜하기"}
-            >
-              <Heart 
-                className={`h-4 w-4 transition-all ${isWished ? 'fill-current' : ''}`} 
-              />
-            </Button>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col items-start gap-3 p-4">
-          <div className="w-full space-y-2">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">{category}</p>
-            <h3 className="font-medium text-lg line-clamp-2 min-h-[3.5rem]">{name}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">{description}</p>
-            <p className="text-xl font-semibold">{Math.floor(price).toLocaleString()}원</p>
-          </div>
-          <Button 
-            className="w-full bg-transparent" 
-            variant="outline"
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
-          </Button>
-        </CardFooter>
-      </Card>
+    <Link href={`/shop/${id}`} className="group block">
+      <div className="relative aspect-[3/4] overflow-hidden bg-muted mb-3 rounded-sm">
+        {isLoading && <Skeleton className="absolute inset-0 z-10" />}
+        <Image
+          src={imgError ? "/placeholder-product.svg" : (image || "/placeholder-product.svg")}
+          alt={name}
+          fill
+          className={`object-cover transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100 group-hover:scale-105'}`}
+          onLoad={() => setIsLoading(false)}
+          onError={handleError}
+        />
+        {/* 찜하기 버튼 */}
+        <Button
+          size="icon"
+          variant="ghost"
+          className={`absolute top-2 right-2 z-20 h-8 w-8 rounded-full transition-all ${
+            isWished 
+              ? 'bg-white text-red-500' 
+              : 'bg-white/80 hover:bg-white text-gray-600'
+          }`}
+          onClick={handleToggleWishlist}
+          aria-label={isWished ? "찜 해제" : "찜하기"}
+        >
+          <Heart 
+            className={`h-4 w-4 ${isWished ? 'fill-current' : ''}`} 
+          />
+        </Button>
+      </div>
+      
+      {/* Product Info */}
+      <div className="space-y-1">
+        <div className="text-xs text-muted-foreground">{category}</div>
+        <h3 className="text-sm font-light line-clamp-2 leading-tight">{name}</h3>
+        <div className="flex items-baseline gap-2">
+          <span className="text-base font-semibold">{Math.floor(price).toLocaleString()}원</span>
+        </div>
+      </div>
     </Link>
   )
 }
