@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/hooks/useCart"
 import { useWishlist } from "@/lib/hooks/useWishlist"
 import { useAuth } from "@/lib/contexts/auth-context"
+import { useQueryClient } from "@tanstack/react-query"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,7 @@ export function Header() {
   const { totalItems: cartItemCount } = useCart()
   const { totalItems: wishlistItemCount } = useWishlist()
   const { user, signInWithGoogle, signOut } = useAuth()
+  const queryClient = useQueryClient()
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,6 +36,14 @@ export function Header() {
       router.push(`/shop?search=${encodeURIComponent(searchValue.trim())}`)
       setSearchValue('')
     }
+  }
+
+  const handleSignOut = async () => {
+    await signOut()
+    // TanStack Query 캐시 초기화
+    queryClient.clear()
+    // 홈으로 리다이렉트
+    router.push('/')
   }
 
   return (
@@ -118,7 +128,7 @@ export function Header() {
                 <DropdownMenuItem disabled className="font-medium">
                   {user.email}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   로그아웃
                 </DropdownMenuItem>
