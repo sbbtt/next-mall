@@ -8,8 +8,8 @@ import { Search, ShoppingCart, Heart, Menu, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { useCartStore, getTotalItems } from "@/lib/store/useCartStore"
-import { useWishlistStore, getTotalWishlistItems } from "@/lib/store/useWishlistStore"
+import { useCart } from "@/lib/hooks/useCart"
+import { useWishlist } from "@/lib/hooks/useWishlist"
 import { useAuth } from "@/lib/contexts/auth-context"
 import {
   DropdownMenu,
@@ -24,8 +24,8 @@ const MobileMenu = dynamic(() => import("./mobile-menu"), { ssr: false })
 export function Header() {
   const router = useRouter()
   const [searchValue, setSearchValue] = useState('')
-  const cartItemCount = useCartStore(getTotalItems)
-  const wishlistItemCount = useWishlistStore(getTotalWishlistItems)
+  const { totalItems: cartItemCount } = useCart()
+  const { totalItems: wishlistItemCount } = useWishlist()
   const { user, signInWithGoogle, signOut } = useAuth()
   
   const handleSearch = (e: React.FormEvent) => {

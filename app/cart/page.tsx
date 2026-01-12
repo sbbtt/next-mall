@@ -1,6 +1,6 @@
 'use client'
 
-import { useCartStore, getTotalPrice } from '@/lib/store/useCartStore'
+import { useCart } from '@/lib/hooks/useCart'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -10,8 +10,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, clearCart } = useCartStore()
-  const totalPrice = useCartStore(getTotalPrice)
+  const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCart()
   const [isClearing, setIsClearing] = useState(false)
 
   const handleClearCart = () => {

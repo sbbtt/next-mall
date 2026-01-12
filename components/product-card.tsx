@@ -4,8 +4,8 @@ import Link from "next/link"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Heart } from "lucide-react"
-import { useCartStore } from "@/lib/store/useCartStore"
-import { useWishlistStore } from "@/lib/store/useWishlistStore"
+import { useCart } from "@/lib/hooks/useCart"
+import { useWishlist } from "@/lib/hooks/useWishlist"
 import {Product} from "@/lib/data/products"
 import { useState, useEffect } from "react"
 import { Skeleton } from "./ui/skeleton"
@@ -15,8 +15,8 @@ interface ProductCardProps {
   product: Product
 }
 export function ProductCard({ product }: ProductCardProps) {
-  const additem = useCartStore(state=>state.addItem)
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
+  const { addItem: addToCart } = useCart()
+  const { toggleWishlist, isInWishlist } = useWishlist()
   const {id, name, price, image, category, description} = product;
   const [imgError, setImgError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -30,32 +30,14 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault() // Link 이동 방지
     e.stopPropagation() // 이벤트 버블링 방지
-    additem(product)
-    toast.success('장바구니에 추가되었습니다', {
-      description: `${name}`,
-      duration: 2000,
-    })
+    addToCart(product)
   }
   
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
-    if (isWished) {
-      removeFromWishlist(id)
-      setIsWished(false)
-      toast.info('찜 목록에서 제거되었습니다', {
-        description: `${name}`,
-        duration: 2000,
-      })
-    } else {
-      addToWishlist(product)
-      setIsWished(true)
-      toast.success('찜 목록에 추가되었습니다', {
-        description: `${name}`,
-        duration: 2000,
-      })
-    }
+    toggleWishlist(id)
+    // Toast는 Hook 내부에서 처리됨
   }
   
   const handleError = () => {

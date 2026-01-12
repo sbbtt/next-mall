@@ -1,7 +1,7 @@
 'use client'
 
-import { useWishlistStore } from '@/lib/store/useWishlistStore'
-import { useCartStore } from '@/lib/store/useCartStore'
+import { useWishlist } from '@/lib/hooks/useWishlist'
+import { useCart } from '@/lib/hooks/useCart'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -10,35 +10,27 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { Product } from '@/lib/data/products'
 
 export default function WishlistPage() {
-  const { items, removeItem, clearWishlist } = useWishlistStore()
-  const { addItem: addToCart } = useCartStore()
+  const { items, removeItem, clearWishlist } = useWishlist()
+  const { addItem: addToCart } = useCart()
   const [isClearing, setIsClearing] = useState(false)
 
   const handleClearWishlist = () => {
     if (window.confirm('찜한 상품을 모두 삭제하시겠습니까?')) {
       setIsClearing(true)
       clearWishlist()
-      toast.success('찜 목록이 비워졌습니다')
       setTimeout(() => setIsClearing(false), 300)
     }
   }
 
-  const handleRemoveItem = (id: number, name: string) => {
+  const handleRemoveItem = (id: number) => {
     removeItem(id)
-    toast.info('찜 목록에서 제거되었습니다', {
-      description: name,
-      duration: 2000,
-    })
   }
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     addToCart(product)
-    toast.success('장바구니에 추가되었습니다', {
-      description: product.name,
-      duration: 2000,
-    })
   }
 
   const handleMoveAllToCart = () => {
@@ -140,7 +132,7 @@ export default function WishlistPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleRemoveItem(item.id, item.name)}
+                          onClick={() => handleRemoveItem(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

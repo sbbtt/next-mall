@@ -2,9 +2,8 @@
 
 import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
-import { useCartStore } from '@/lib/store/useCartStore'
+import { useCart } from '@/lib/hooks/useCart'
 import { Product } from '@/lib/data/products'
-import { toast } from 'sonner'
 
 interface AddToCartButtonProps {
   product: Product
@@ -13,14 +12,10 @@ interface AddToCartButtonProps {
 }
 
 export function AddToCartButton({ product, size = 'lg', className }: AddToCartButtonProps) {
-  const { addItem } = useCartStore()
+  const { addItem } = useCart()
 
   const handleAddToCart = () => {
     addItem(product)
-    toast.success('장바구니에 추가되었습니다', {
-      description: `${product.name}`,
-      duration: 2000,
-    })
   }
 
   return (

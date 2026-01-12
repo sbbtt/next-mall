@@ -2,9 +2,8 @@
 
 import { Button } from '@/components/ui/button'
 import { Heart } from 'lucide-react'
-import { useWishlistStore } from '@/lib/store/useWishlistStore'
+import { useWishlist } from '@/lib/hooks/useWishlist'
 import { Product } from '@/lib/data/products'
-import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
 
 interface AddToWishlistButtonProps {
@@ -20,7 +19,7 @@ export function AddToWishlistButton({
   className = '',
   showText = true 
 }: AddToWishlistButtonProps) {
-  const { addItem, removeItem, isInWishlist } = useWishlistStore()
+  const { toggleWishlist, isInWishlist } = useWishlist()
   const [isWished, setIsWished] = useState(false)
   
   // 클라이언트에서만 찜 상태 확인 (Hydration mismatch 방지)
@@ -29,21 +28,7 @@ export function AddToWishlistButton({
   }, [product.id, isInWishlist])
 
   const handleToggleWishlist = () => {
-    if (isWished) {
-      removeItem(product.id)
-      setIsWished(false)
-      toast.info('찜 목록에서 제거되었습니다', {
-        description: `${product.name}`,
-        duration: 2000,
-      })
-    } else {
-      addItem(product)
-      setIsWished(true)
-      toast.success('찜 목록에 추가되었습니다', {
-        description: `${product.name}`,
-        duration: 2000,
-      })
-    }
+    toggleWishlist(product.id)
   }
 
   return (
