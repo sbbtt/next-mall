@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 // GET - 사용자의 장바구니 목록 조회
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 // POST - 장바구니 추가 (또는 수량 증가)
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 // PATCH - 장바구니 수량 변경
 export async function PATCH(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -130,7 +130,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE - 장바구니 제거
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     

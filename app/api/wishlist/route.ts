@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 // GET - 사용자의 찜하기 목록 조회
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 // POST - 찜하기 추가
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
 // DELETE - 찜하기 제거
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = await createServerClient()
+    const supabase = await createClient()
     
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
