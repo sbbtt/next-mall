@@ -10,62 +10,64 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           {/* Left - Promotion Banners */}
           <div className="space-y-4">
-            {/* Coupon Pack */}
-            <Link href="/shop" className="block">
+            {/* New Arrivals */}
+            <Link href="/shop?sort=newest" className="block">
               <div className="bg-[#FF6B35] text-white p-8 rounded-lg hover:opacity-90 transition-opacity h-[240px] flex flex-col justify-between">
-                <div className="text-sm font-light mb-2">새해맞이 깜짝선물</div>
-                <div className="text-5xl font-bold mb-4">50,000</div>
+                <div className="text-sm font-light mb-2">신상품 가득</div>
+                <div className="text-5xl font-bold mb-4">NEW</div>
                 <div className="h-px bg-white/30 mb-4"></div>
-                <div className="text-sm uppercase tracking-wider">COUPON PACK</div>
+                <div className="text-sm uppercase tracking-wider">신상품 보기</div>
               </div>
             </Link>
             
-            {/* Point Back */}
-            <Link href="/shop" className="block">
+            {/* Best Sellers */}
+            <Link href="/shop?sort=price-desc" className="block">
               <div className="bg-[#4169E1] text-white p-8 rounded-lg hover:opacity-90 transition-opacity h-[240px] flex flex-col justify-between">
-                <div className="text-sm font-light mb-2">새해맞이 깜짝선물</div>
-                <div className="text-5xl font-bold mb-4">5,000</div>
+                <div className="text-sm font-light mb-2">프리미엄 라인</div>
+                <div className="text-5xl font-bold mb-4">BEST</div>
                 <div className="h-px bg-white/30 mb-4"></div>
-                <div className="text-sm">애플머니 페이백</div>
+                <div className="text-sm">프리미엄 제품 보기</div>
               </div>
             </Link>
 
-            {/* Benefit Text */}
-            <div className="bg-black text-white p-8 rounded-lg h-[160px] flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-2xl font-light mb-2">새해에 그냥 드리는</div>
-                <div className="text-3xl font-bold">5만원 + 5천원 혜택</div>
+            {/* All Products */}
+            <Link href="/shop" className="block">
+              <div className="bg-black text-white p-8 rounded-lg h-[160px] flex items-center justify-center hover:bg-gray-900 transition-colors">
+                <div className="text-center">
+                  <div className="text-2xl font-light mb-2">전체 상품 보기</div>
+                  <div className="text-3xl font-bold">VIEW ALL</div>
+                </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Right - Large Product Images */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Big Deal */}
-            <Link href="/shop" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
+            {/* Furniture */}
+            <Link href="/shop?category=Furniture" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
               <img 
                 src="/images/modern-beige-lounge-chair.jpg" 
-                alt="New Big Deal"
+                alt="Furniture Collection"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute bottom-8 left-8 z-20 text-white">
-                <div className="text-sm mb-2">겨울신상 가득</div>
-                <div className="text-4xl font-bold tracking-tight">NEW BIG DEAL</div>
+                <div className="text-sm mb-2">가구 컬렉션</div>
+                <div className="text-4xl font-bold tracking-tight">FURNITURE</div>
               </div>
             </Link>
 
-            {/* Low Classic */}
-            <Link href="/shop" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
+            {/* Lighting */}
+            <Link href="/shop?category=Lighting" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
               <img 
                 src="/images/modern-sculptural-floor-lamp.jpg" 
-                alt="Classic"
+                alt="Lighting Collection"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute bottom-8 left-8 z-20 text-white">
-                <div className="text-sm mb-2">클래식 컬렉션</div>
-                <div className="text-4xl font-bold tracking-tight">CLASSIC</div>
+                <div className="text-sm mb-2">조명 컬렉션</div>
+                <div className="text-4xl font-bold tracking-tight">LIGHTING</div>
               </div>
             </Link>
           </div>

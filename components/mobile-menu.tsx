@@ -42,11 +42,11 @@ export default function MobileMenu({ searchValue, setSearchValue, onSearch }: Mo
           <Link href="/shop" className="text-lg font-medium transition-colors hover:text-accent">
             Shop
           </Link>
-          <Link href="/about" className="text-lg font-medium transition-colors hover:text-accent">
-            About
+          <Link href="/wishlist" className="text-lg font-medium transition-colors hover:text-accent">
+            Wishlist
           </Link>
-          <Link href="/contact" className="text-lg font-medium transition-colors hover:text-accent">
-            Contact
+          <Link href="/cart" className="text-lg font-medium transition-colors hover:text-accent">
+            Cart
           </Link>
         </nav>
       </SheetContent>

@@ -59,12 +59,6 @@ export function Header() {
           <Link href="/shop" className="text-sm font-medium transition-colors hover:text-accent">
             Shop
           </Link>
-          <Link href="/about" className="text-sm font-medium transition-colors hover:text-accent">
-            About
-          </Link>
-          <Link href="/contact" className="text-sm font-medium transition-colors hover:text-accent">
-            Contact
-          </Link>
         </nav>
 
         {/* Search & Cart */}
