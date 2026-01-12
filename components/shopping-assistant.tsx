@@ -28,7 +28,7 @@ export function ShoppingAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      text: "안녕하세요! STORE의 쇼핑 어시스턴트입니다. 🛋️\n\n가구, 조명, 인테리어 소품을 찾고 계신가요? 무엇을 도와드릴까요?",
+      text: "안녕하세요! 저는 AI 챗봇입니다. 🛋️\n\n가구, 조명, 인테리어 소품을 찾고 계신가요? 무엇을 도와드릴까요?",
     },
   ])
   const [input, setInput] = useState("")
@@ -122,13 +122,13 @@ export function ShoppingAssistant() {
       {/* Floating chat button */}
       <Button
         onClick={() => setIsExpanded(true)}
-        className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg transition-all duration-300 md:bottom-6 md:right-6 ${
+        className={`fixed bottom-6 right-6 h-14 px-6 rounded-full shadow-lg transition-all duration-300 md:bottom-6 md:right-6 hover:scale-105 ${
           isExpanded ? "scale-0 opacity-0" : "scale-100 opacity-100"
         }`}
-        size="icon"
         aria-label="Open shopping assistant"
       >
-        <MessageCircle className="h-6 w-6" />
+        <MessageCircle className="h-5 w-5 mr-2" />
+        <span className="font-medium">챗봇 문의하기</span>
       </Button>
 
       {/* Expanded chat widget */}
