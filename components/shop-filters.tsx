@@ -7,7 +7,7 @@ import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { X, RotateCcw } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 
 interface ShopFiltersProps {
   currentCategory: string
@@ -28,6 +28,11 @@ export function ShopFilters({ currentCategory, currentMinPrice, currentMaxPrice 
   const [isPending, startTransition] = useTransition()
   
   const [priceRange, setPriceRange] = useState([currentMinPrice, currentMaxPrice])
+  
+  // props가 변경될 때 price range 상태 동기화
+  useEffect(() => {
+    setPriceRange([currentMinPrice, currentMaxPrice])
+  }, [currentMinPrice, currentMaxPrice])
 
   const updateUrl = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString())

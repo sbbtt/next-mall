@@ -44,7 +44,7 @@ export default function Home() {
           {/* Right - Large Product Images */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Furniture */}
-            <Link href="/shop?category=Furniture" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
+            <Link href="/shop?category=furniture" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
               <img 
                 src="/images/modern-beige-lounge-chair.jpg" 
@@ -58,7 +58,7 @@ export default function Home() {
             </Link>
 
             {/* Lighting */}
-            <Link href="/shop?category=Lighting" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
+            <Link href="/shop?category=lighting" className="relative group overflow-hidden rounded-lg h-[500px] md:h-full">
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
               <img 
                 src="/images/modern-sculptural-floor-lamp.jpg" 
