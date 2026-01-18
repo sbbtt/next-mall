@@ -5,6 +5,9 @@ export type Product = {
     category: string;
     image: string;
     description: string;
+    // Supabase 호환 (snake_case)
+    in_stock?: boolean;
+    // 하위 호환 (camelCase)
     inStock?: boolean;
     features?: string[];
     dimensions?: string;

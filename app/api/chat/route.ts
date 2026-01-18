@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { products } from '@/lib/data/products'
+import { createClient } from '@/lib/supabase/server'
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 
@@ -44,6 +44,20 @@ export async function POST(req: NextRequest) {
           products: []
         })
       }
+    }
+
+    // Supabase에서 상품 가져오기
+    const supabase = await createClient()
+    const { data: products, error: dbError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('in_stock', true)
+
+    if (dbError || !products) {
+      return NextResponse.json(
+        { error: '상품 데이터를 불러올 수 없습니다.' },
+        { status: 500 }
+      )
     }
 
     const productsByCategory = {

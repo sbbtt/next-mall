@@ -3,16 +3,10 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Check, ArrowLeft, Package, Ruler, Layers } from "lucide-react"
-import { getProductById, products } from "@/lib/data/products"
 import { ProductImage } from "@/components/product-image"
 import { AddToCartButton } from "@/components/add-to-cart-button"
 import { AddToWishlistButton } from "@/components/add-to-wishlist-button"
-
-export function generateStaticParams() {
-  return products.map((product) => ({
-    id: product.id.toString(),
-  }))
-}
+import { createClient } from "@/lib/supabase/server"
 
 export default async function ProductDetailPage({
   params,
@@ -20,9 +14,16 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>
 }) {
   const resolvedParams = await params
-  const product = getProductById(Number.parseInt(resolvedParams.id))
+  const supabase = await createClient()
+  
+  // Supabase에서 상품 가져오기
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', Number.parseInt(resolvedParams.id))
+    .single()
 
-  if (!product) {
+  if (error || !product) {
     notFound()
   }
 
@@ -55,7 +56,7 @@ export default async function ProductDetailPage({
             <h1 className="text-4xl md:text-5xl font-serif font-semibold mb-4">{product.name}</h1>
             <p className="text-3xl font-semibold mb-6">{Math.floor(product.price).toLocaleString()}원</p>
 
-            {product.inStock ? (
+            {product.in_stock ? (
               <div className="flex items-center gap-2 mb-6 text-green-600">
                 <Check className="h-5 w-5" />
                 <span className="font-medium">In Stock</span>
@@ -75,60 +76,19 @@ export default async function ProductDetailPage({
 
             <Separator className="mb-8" />
 
-            {/* Product Features */}
-            <div className="space-y-6">
-              {product.features && product.features.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-3">Features</h3>
-                  <ul className="space-y-2">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Specifications */}
-              <div className="grid gap-4">
-                {product.dimensions && (
-                  <Card>
-                    <CardContent className="flex items-start gap-3 p-4">
-                      <Ruler className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium mb-1">Dimensions</p>
-                        <p className="text-sm text-muted-foreground">{product.dimensions}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {product.materials && (
-                  <Card>
-                    <CardContent className="flex items-start gap-3 p-4">
-                      <Layers className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium mb-1">Materials</p>
-                        <p className="text-sm text-muted-foreground">{product.materials}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                <Card>
-                  <CardContent className="flex items-start gap-3 p-4">
-                    <Package className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium mb-1">Shipping</p>
-                      <p className="text-sm text-muted-foreground">
-                        50만원 이상 구매 시 무료 배송. 일반 배송 5-7일 소요.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            {/* Shipping Info */}
+            <div className="grid gap-4">
+              <Card>
+                <CardContent className="flex items-start gap-3 p-4">
+                  <Package className="h-5 w-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-medium mb-1">Shipping</p>
+                    <p className="text-sm text-muted-foreground">
+                      50만원 이상 구매 시 무료 배송. 일반 배송 5-7일 소요.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

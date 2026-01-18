@@ -28,14 +28,10 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, X, Sparkles, Plus } from "lucide-react"
 
 const categories = ["Furniture", "Decor", "Textiles", "Lighting", "Storage"]
-const colorOptions = ["White", "Black", "Gray", "Beige", "Brown", "Blue", "Green"]
-const sizeOptions = ["XS", "S", "M", "L", "XL"]
 
 export default function NewProductPage() {
   const router = useRouter()
   const [images, setImages] = useState<string[]>([])
-  const [selectedColors, setSelectedColors] = useState<string[]>([])
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([])
   const [description, setDescription] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [productName, setProductName] = useState("")
@@ -55,18 +51,6 @@ export default function NewProductPage() {
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
-    )
-  }
-
-  const toggleSize = (size: string) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    )
   }
 
   const handleAIGenerate = async () => {
@@ -157,9 +141,9 @@ export default function NewProductPage() {
       />
       <main className="p-6">
         <div className="mb-6">
-          <h1 className="font-serif text-2xl font-semibold">Add New Product</h1>
+          <h1 className="font-serif text-2xl font-semibold">신규 상품 등록</h1>
           <p className="text-muted-foreground">
-            Fill in the details to add a new product to your store
+            상품 정보를 입력하여 새로운 상품을 등록하세요
           </p>
         </div>
 
@@ -168,27 +152,27 @@ export default function NewProductPage() {
             {/* Basic Info */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Basic Information</CardTitle>
+                <CardTitle className="text-base">기본 정보</CardTitle>
                 <CardDescription>
-                  Enter the basic details of your product
+                  상품의 기본 정보를 입력해주세요
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Product Name</Label>
+                  <Label htmlFor="name">상품명</Label>
                   <Input 
                     id="name" 
-                    placeholder="Enter product name" 
+                    placeholder="상품명을 입력하세요" 
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">카테고리</Label>
                     <Select value={category} onValueChange={setCategory}>
                       <SelectTrigger id="category">
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="카테고리 선택" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -200,7 +184,7 @@ export default function NewProductPage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price</Label>
+                    <Label htmlFor="price">가격</Label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                         ₩
@@ -222,9 +206,9 @@ export default function NewProductPage() {
             {/* Media */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Media</CardTitle>
+                <CardTitle className="text-base">이미지</CardTitle>
                 <CardDescription>
-                  Add photos of your product
+                  상품 이미지를 업로드하세요 (선택사항 - 없으면 자동으로 찾습니다)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -257,10 +241,10 @@ export default function NewProductPage() {
                   >
                     <Upload className="mb-2 h-8 w-8 text-muted-foreground" />
                     <span className="text-sm font-medium">
-                      Drag and drop or click to upload
+                      드래그하거나 클릭하여 업로드
                     </span>
                     <span className="mt-1 text-xs text-muted-foreground">
-                      PNG, JPG up to 10MB
+                      PNG, JPG 최대 10MB
                     </span>
                     <input
                       id="images"
@@ -280,9 +264,9 @@ export default function NewProductPage() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-base">Description</CardTitle>
+                    <CardTitle className="text-base">상품 설명</CardTitle>
                     <CardDescription>
-                      Describe your product in detail
+                      상품에 대한 자세한 설명을 입력하세요
                     </CardDescription>
                   </div>
                   <Button
@@ -293,64 +277,17 @@ export default function NewProductPage() {
                     className="relative overflow-hidden border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 hover:from-indigo-100 hover:to-purple-100 hover:text-indigo-800 dark:border-indigo-800 dark:from-indigo-950/50 dark:to-purple-950/50 dark:text-indigo-300 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
-                    {isGenerating ? "Generating..." : "AI Auto-Generate"}
+                    {isGenerating ? "생성 중..." : "AI 자동 생성"}
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
                 <Textarea
-                  placeholder="Enter product description..."
+                  placeholder="상품 설명을 입력하세요..."
                   className="min-h-32 resize-none"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </CardContent>
-            </Card>
-
-            {/* Options */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Options</CardTitle>
-                <CardDescription>
-                  Add variants like colors and sizes
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-3">
-                  <Label>Colors</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {colorOptions.map((color) => (
-                      <Badge
-                        key={color}
-                        variant={
-                          selectedColors.includes(color) ? "default" : "outline"
-                        }
-                        className="cursor-pointer transition-colors"
-                        onClick={() => toggleColor(color)}
-                      >
-                        {color}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <Separator />
-                <div className="space-y-3">
-                  <Label>Sizes</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {sizeOptions.map((size) => (
-                      <Badge
-                        key={size}
-                        variant={
-                          selectedSizes.includes(size) ? "default" : "outline"
-                        }
-                        className="cursor-pointer transition-colors"
-                        onClick={() => toggleSize(size)}
-                      >
-                        {size}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -359,23 +296,9 @@ export default function NewProductPage() {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Publish</CardTitle>
+                <CardTitle className="text-base">상품 등록</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select defaultValue="draft">
-                    <SelectTrigger id="status">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Separator />
                 <div className="flex flex-col gap-2">
                   <Button 
                     className="w-full"
@@ -383,27 +306,8 @@ export default function NewProductPage() {
                     disabled={isCreating}
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    {isCreating ? '등록 중...' : 'Create Product'}
+                    {isCreating ? '등록 중...' : '상품 등록하기'}
                   </Button>
-                  <Button variant="outline" className="w-full bg-transparent">
-                    Save as Draft
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Inventory</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="sku">SKU</Label>
-                  <Input id="sku" placeholder="Enter SKU" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input id="quantity" type="number" placeholder="0" />
                 </div>
               </CardContent>
             </Card>

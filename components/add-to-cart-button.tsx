@@ -23,7 +23,7 @@ export function AddToCartButton({ product, size = 'lg', className }: AddToCartBu
       size={size} 
       className={className} 
       onClick={handleAddToCart}
-      disabled={!product.inStock}
+      disabled={!product.in_stock && product.inStock !== true}
     >
       <ShoppingCart className="mr-2 h-5 w-5" />
       Add to Cart
