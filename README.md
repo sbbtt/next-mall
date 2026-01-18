@@ -77,6 +77,25 @@
 - 페이지당 8개 상품 표시
 - URL 파라미터 기반 페이지 상태 관리
 
+### 보안 설정 (포트폴리오 환경)
+
+**Row Level Security (RLS) 정책:**
+- **현재 설정**: 모든 사용자가 상품 CRUD 가능
+- **이유**: 
+  - 마이그레이션 스크립트 실행 용이
+  - 데모/포트폴리오 목적
+  - 제한된 사용자 (면접관, 리뷰어)
+- **프로덕션 환경 변경 필요**:
+```sql
+-- 실제 서비스 배포 시:
+DROP POLICY IF EXISTS "Anyone can insert products" ON public.products;
+
+CREATE POLICY "Only authenticated users can insert"
+  ON public.products FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+```
+
 ### 기술적 도전과제 및 해결
 
 #### 1. Supabase와 로컬 상태 동기화
