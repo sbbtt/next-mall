@@ -9,9 +9,11 @@
 - Vercel: CI/CD 파이프라인 구축 및 호스팅 환경으로 사용됩니다.
 
 ### State Management & Data Fetching
-- Zustand: 장바구니 상태 관리를 위한 가벼운 전역 상태 관리 라이브러리입니다. persist 미들웨어를 활용해 localStorage에 상태를 저장합니다.
+- Zustand: 장바구니와 찜하기 로컬 상태 관리를 위한 가벼운 전역 상태 관리 라이브러리입니다. persist 미들웨어를 활용해 localStorage에 상태를 저장합니다.
+- TanStack Query (React Query): 서버 상태 관리 및 Supabase 데이터 동기화를 위한 라이브러리입니다. Optimistic Updates로 빠른 UI 응답성을 제공합니다.
 
-### Backend & AI
+### Backend & Database
+- Supabase: PostgreSQL 기반 BaaS(Backend-as-a-Service)로 사용자 인증(OAuth) 및 데이터베이스를 관리합니다.
 - Google Gemini API: AI 기반 쇼핑 어시스턴트 챗봇을 위한 대화형 AI 모델입니다.
 
 ## Design & UI Implementation
@@ -40,34 +42,78 @@
 - 다중 정렬 옵션 (가격, 이름 오름차순/내림차순)
 - URL 파라미터 기반 상태 관리로 북마크 및 공유 가능
 
-#### 3. 장바구니 시스템
-- Zustand persist 미들웨어로 localStorage 동기화
+#### 3. 찜하기 (Wishlist) 시스템
+- Supabase 데이터베이스와 TanStack Query를 활용한 실시간 동기화
+- 로그인한 사용자별 찜 목록 관리
+- Optimistic Updates로 즉각적인 UI 반응
+- 찜 목록 일괄 장바구니 추가 기능
+
+#### 4. 장바구니 시스템
+- Zustand와 Supabase 하이브리드 방식으로 로컬/서버 상태 동기화
 - 수량 조절, 개별 삭제, 전체 삭제 기능
 - 실시간 총액 계산 및 상품 개수 표시
 - Toast 알림으로 사용자 피드백 제공
+- 로그아웃 시 자동으로 로컬 상태 초기화
 
-#### 4. 제품 상세 페이지
+#### 5. 소셜 로그인 (Google OAuth)
+- Supabase Auth를 활용한 Google 소셜 로그인
+- 로그인/로그아웃 상태에 따른 UI 변경
+- 로그인 후 찜하기 및 장바구니 데이터 서버 동기화
+
+#### 6. 어드민 페이지 (Admin Dashboard)
+- 소셜 로그인 후 접근 가능한 관리자 페이지
+- 대시보드: 상품 통계 (총 50개 상품)
+- 상품 관리: 전체 상품 목록 조회 (데이터 타입만 일치)
+- 주문 관리, 분석, 설정 페이지 (UI만 구현)
+- 독립적인 레이아웃 (Header, Footer, 챗봇 제거)
+- Sidebar 네비게이션 및 Breadcrumb
+
+#### 7. 제품 상세 페이지
 - SSR로 SEO 최적화
 - 이미지 로딩 Skeleton UI
 - Fallback 이미지 처리 (404 대응)
 - 반응형 2단 레이아웃
 
-#### 5. 페이지네이션
+#### 8. 페이지네이션
 - 페이지당 8개 상품 표시
 - URL 파라미터 기반 페이지 상태 관리
 
 ### 기술적 도전과제 및 해결
 
-#### 1. Hydration Mismatch 해결
-**문제**: Radix UI의 Sheet 컴포넌트에서 서버/클라이언트 간 ID 불일치로 hydration 에러 발생
+#### 1. Supabase와 로컬 상태 동기화
+**문제**: 로그인/로그아웃 시 Zustand(로컬) 상태와 Supabase(서버) 상태 불일치
 
-**해결**: Dynamic Import with `ssr: false` 적용
+**해결**: 
+- TanStack Query로 서버 상태 관리
+- Optimistic Updates로 UI 즉시 반응
+- 로그아웃 시 `queryClient.clear()`로 모든 캐시 초기화
+```typescript
+const handleSignOut = async () => {
+  await signOut()
+  queryClient.clear() // 모든 쿼리 캐시 삭제
+  router.push('/')
+}
+```
+
+#### 2. Hydration Mismatch 해결
+**문제**: 
+1. Radix UI의 Sheet 컴포넌트에서 서버/클라이언트 간 ID 불일치
+2. Wishlist 상태가 localStorage에서 읽히면서 서버와 클라이언트 HTML 불일치
+
+**해결**: 
+- Dynamic Import with `ssr: false` 적용
+- `useEffect`로 클라이언트 마운트 후 상태 읽기
 ```typescript
 const MobileMenu = dynamic(() => import('./mobile-menu'), { ssr: false })
-```
-클라이언트에서만 렌더링하여 SSR 관련 hydration 문제를 원천 차단했습니다.
 
-#### 2. 템플릿 리터럴 파싱 이슈
+// Wishlist 상태는 클라이언트에서만 초기화
+const [isWished, setIsWished] = useState(false)
+useEffect(() => {
+  setIsWished(isInWishlist(product.id))
+}, [product.id])
+```
+
+#### 3. 템플릿 리터럴 파싱 이슈
 **문제**: AI 프롬프트 작성 시 템플릿 리터럴 내부에 특수문자(화살표 `→`, 불릿 등)를 사용하면 TypeScript 파서 오류 발생
 
 **해결**: 특수문자를 단순 기호로 대체
@@ -80,7 +126,17 @@ const MobileMenu = dynamic(() => import('./mobile-menu'), { ssr: false })
 ```
 템플릿 리터럴 내에서는 ASCII 기호만 사용하여 안정성을 확보했습니다.
 
-#### 3. 이미지 로딩 최적화
+#### 4. Supabase OAuth 리다이렉트 설정
+**문제**: 로컬 개발 환경에서 Google 로그인 후 Vercel 배포 주소로 리다이렉트
+
+**해결**: Supabase Dashboard에서 Redirect URLs 설정
+```
+http://localhost:3000/**
+https://next-mall-bice.vercel.app/**
+```
+로컬과 프로덕션 환경 모두에서 정상 작동하도록 설정했습니다.
+
+#### 5. 이미지 로딩 최적화
 **문제**: Unsplash API 이미지 일부가 404 에러 발생
 
 **해결**: 
@@ -88,7 +144,7 @@ const MobileMenu = dynamic(() => import('./mobile-menu'), { ssr: false })
 - Skeleton UI로 로딩 상태 시각화
 - `ProductImage` 컴포넌트로 재사용성 향상
 
-#### 4. URL 파라미터 검증
+#### 6. URL 파라미터 검증
 **문제**: 사용자가 임의로 URL을 조작하여 잘못된 값 입력 가능
 
 **해결**: 서버 측 검증 로직 구현
