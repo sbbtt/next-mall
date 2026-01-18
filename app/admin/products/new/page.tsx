@@ -128,7 +128,9 @@ export default function NewProductPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create product')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('API Error:', response.status, errorData)
+        throw new Error(errorData.error || 'Failed to create product')
       }
 
       const data = await response.json()

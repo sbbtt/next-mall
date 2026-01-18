@@ -40,23 +40,32 @@ async function searchUnsplashImage(query: string): Promise<string | null> {
 
 export async function POST(request: Request) {
   try {
+    console.log('=== Product Creation Started ===')
+    
     const supabase = await createClient()
 
     // 인증 확인
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    console.log('User:', user?.id, user?.email)
+    console.log('Auth Error:', authError)
     
     if (!user) {
+      console.error('Unauthorized: No user found')
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized - Please login first' },
         { status: 401 }
       )
     }
 
     const body = await request.json()
+    console.log('Request Body:', body)
+    
     const { name, description, price, category, image } = body
 
     // 유효성 검사
     if (!name || !price || !category) {
+      console.error('Validation failed:', { name: !!name, price: !!price, category: !!category })
       return NextResponse.json(
         { error: 'Name, price, and category are required' },
         { status: 400 }
@@ -86,6 +95,14 @@ export async function POST(request: Request) {
     }
 
     // Supabase에 상품 등록
+    console.log('Attempting to insert product:', {
+      name,
+      description: description?.substring(0, 50),
+      price: parseInt(price),
+      category: category.toLowerCase(),
+      image: finalImage?.substring(0, 50),
+    })
+    
     const { data, error } = await supabase
       .from('products')
       .insert({
@@ -103,11 +120,12 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Supabase insert error:', error)
       return NextResponse.json(
-        { error: 'Failed to create product' },
+        { error: `Database error: ${error.message}` },
         { status: 500 }
       )
     }
 
+    console.log('Product created successfully:', data.id)
     return NextResponse.json({ 
       success: true,
       product: data 
