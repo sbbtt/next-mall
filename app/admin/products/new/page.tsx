@@ -36,6 +36,9 @@ export default function NewProductPage() {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
   const [description, setDescription] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
+  const [productName, setProductName] = useState("")
+  const [category, setCategory] = useState("")
+  const [price, setPrice] = useState("")
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -64,13 +67,38 @@ export default function NewProductPage() {
   }
 
   const handleAIGenerate = async () => {
+    if (!productName.trim()) {
+      alert('상품명을 먼저 입력해주세요!')
+      return
+    }
+
     setIsGenerating(true)
-    // Simulate AI generation
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setDescription(
-      "Elevate your living space with this exquisitely crafted piece that seamlessly blends form and function. Designed with meticulous attention to detail, it features premium materials and timeless aesthetics that complement any modern interior. The sophisticated silhouette and neutral palette make it a versatile addition to your home, while the superior craftsmanship ensures lasting durability and comfort."
-    )
-    setIsGenerating(false)
+    
+    try {
+      const response = await fetch('/api/admin/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productName,
+          category,
+          price,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate description')
+      }
+
+      const data = await response.json()
+      setDescription(data.description)
+    } catch (error) {
+      console.error('AI generation error:', error)
+      alert('설명 생성에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -103,19 +131,24 @@ export default function NewProductPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Product Name</Label>
-                  <Input id="name" placeholder="Enter product name" />
+                  <Input 
+                    id="name" 
+                    placeholder="Enter product name" 
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
+                  />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
-                    <Select>
+                    <Select value={category} onValueChange={setCategory}>
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category.toLowerCase()}>
-                            {category}
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat.toLowerCase()}>
+                            {cat}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -125,13 +158,15 @@ export default function NewProductPage() {
                     <Label htmlFor="price">Price</Label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        $
+                        ₩
                       </span>
                       <Input
                         id="price"
                         type="number"
-                        placeholder="0.00"
+                        placeholder="0"
                         className="pl-7"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
                       />
                     </div>
                   </div>
