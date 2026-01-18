@@ -3,6 +3,7 @@
 import React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { AdminHeader } from "@/components/admin/admin-header"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,6 +32,7 @@ const colorOptions = ["White", "Black", "Gray", "Beige", "Brown", "Blue", "Green
 const sizeOptions = ["XS", "S", "M", "L", "XL"]
 
 export default function NewProductPage() {
+  const router = useRouter()
   const [images, setImages] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
@@ -39,6 +41,7 @@ export default function NewProductPage() {
   const [productName, setProductName] = useState("")
   const [category, setCategory] = useState("")
   const [price, setPrice] = useState("")
+  const [isCreating, setIsCreating] = useState(false)
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -98,6 +101,46 @@ export default function NewProductPage() {
       alert('설명 생성에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsGenerating(false)
+    }
+  }
+
+  const handleCreateProduct = async () => {
+    if (!productName.trim() || !price || !category) {
+      alert('상품명, 가격, 카테고리는 필수 입력 항목입니다!')
+      return
+    }
+
+    setIsCreating(true)
+
+    try {
+      const response = await fetch('/api/admin/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: productName,
+          description,
+          price,
+          category,
+          image: images[0] || null, // 첫 번째 이미지 사용 (없으면 Unsplash에서 자동)
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create product')
+      }
+
+      const data = await response.json()
+      
+      alert('상품이 성공적으로 등록되었습니다!')
+      router.push('/admin/products')
+      
+    } catch (error) {
+      console.error('Product creation error:', error)
+      alert('상품 등록에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -332,9 +375,13 @@ export default function NewProductPage() {
                 </div>
                 <Separator />
                 <div className="flex flex-col gap-2">
-                  <Button className="w-full">
+                  <Button 
+                    className="w-full"
+                    onClick={handleCreateProduct}
+                    disabled={isCreating}
+                  >
                     <Plus className="mr-2 h-4 w-4" />
-                    Create Product
+                    {isCreating ? '등록 중...' : 'Create Product'}
                   </Button>
                   <Button variant="outline" className="w-full bg-transparent">
                     Save as Draft
