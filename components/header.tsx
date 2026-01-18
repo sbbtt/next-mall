@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
-import { Search, ShoppingCart, Heart, Menu, User, LogOut } from "lucide-react"
+import { Search, ShoppingCart, Heart, Menu, User, LogOut, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -121,6 +121,12 @@ export function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem disabled className="font-medium">
                   {user.email}
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">
+                    <Settings className="mr-2 h-4 w-4" />
+                    어드민
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />

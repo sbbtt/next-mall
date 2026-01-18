@@ -1,5 +1,7 @@
+"use client"
+
 import type React from "react"
-import type { Metadata } from "next"
+import { usePathname } from "next/navigation"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -13,33 +15,26 @@ import { ReactQueryProvider } from "@/lib/query-client"
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
-export const metadata: Metadata = {
-  title: "Apple Furniture - Modern E-Commerce",
-  description: "Discover timeless design for your modern home",
-  generator: "v0.app",
-  icons: {
-    icon: "/images/icon.png",
-    apple: "/images/icon.png",
-  },
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const pathname = usePathname()
+  const isAdminPage = pathname?.startsWith('/admin')
+
   return (
     <html lang="en">
       <body className={`font-sans antialiased min-h-screen flex flex-col`}>
         <AuthProvider>
           <ReactQueryProvider>
-            <Header/>
+            {!isAdminPage && <Header/>}
             <main className="flex-1">
               {children}
             </main>
-            <Footer/>
+            {!isAdminPage && <Footer/>}
             <Toaster />
-            <ShoppingAssistant />
+            {!isAdminPage && <ShoppingAssistant />}
           </ReactQueryProvider>
         </AuthProvider>
         <Analytics />
