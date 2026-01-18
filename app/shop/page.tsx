@@ -1,10 +1,10 @@
 import { ProductCard } from '@/components/product-card';
-import { products } from '@/lib/data/products';
 import { ShopFilters } from '@/components/shop-filters';
 import { ShopHeader } from '@/components/shop-header';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/lib/supabase/server';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -40,16 +40,29 @@ export default async function page({searchParams}:{searchParams: Promise<SearchP
   
   const currentPage = Number(page);
   
+  // Supabase에서 상품 가져오기
+  const supabase = await createClient();
+  const { data: products, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('in_stock', true);
+
+  if (error) {
+    console.error('Failed to fetch products:', error);
+  }
+
+  const allProducts = products || [];
+  
   // 필터링
-  let filteredProducts = products.filter((product) => {
+  let filteredProducts = allProducts.filter((product) => {
     // 검색어 필터
     const searchLower = validatedSearch.toLowerCase();
     const matchesSearch = !validatedSearch || 
       product.name.toLowerCase().includes(searchLower) ||
-      product.description.toLowerCase().includes(searchLower);
+      (product.description && product.description.toLowerCase().includes(searchLower));
     
     // 카테고리 필터
-    const matchesCategory = !validatedCategory || product.category === validatedCategory;
+    const matchesCategory = !validatedCategory || product.category.toLowerCase() === validatedCategory;
     
     // 가격 필터
     const matchesPrice = product.price >= validatedMinPrice && product.price <= validatedMaxPrice;

@@ -1,8 +1,23 @@
 import Link from "next/link"
 import { ProductCard } from "@/components/product-card"
-import { products } from "@/lib/data/products"
+import { createClient } from "@/lib/supabase/server"
 
-export default function Home() {
+export default async function Home() {
+  // Supabase에서 상품 가져오기
+  const supabase = await createClient()
+  const { data: products, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('in_stock', true)
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  if (error) {
+    console.error('Failed to fetch products:', error)
+  }
+
+  const displayProducts = products || []
+
   return (
     <div className="min-h-screen">
       {/* Hero Grid Section - 29CM Style */}
@@ -77,7 +92,7 @@ export default function Home() {
       {/* Products Grid */}
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.slice(0, 8).map((product) => (
+          {displayProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
