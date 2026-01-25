@@ -6,14 +6,16 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-// import { ScrollArea } from "@/components/ui/scroll-area" // 사용 안 함
 import { MessageCircle, X, Send } from "lucide-react"
-import { products } from "@/lib/data/products"
 import Image from "next/image"
 import Link from "next/link"
 
 type ProductRecommendation = {
   id: number
+  name: string
+  image: string
+  price: number
+  category: string
   description: string
 }
 
@@ -174,14 +176,11 @@ export function ShoppingAssistant() {
                     {/* 추천 제품 카드 (봇 메시지만) */}
                     {message.role === "bot" && message.products && message.products.length > 0 && (
                       <div className="space-y-2">
-                        {message.products.map((productRec) => {
-                          const product = products.find((p) => p.id === productRec.id)
-                          if (!product) return null
-
+                        {message.products.map((product) => {
                           return (
                             <Link
-                              key={productRec.id}
-                              href={`/shop/${productRec.id}`}
+                              key={product.id}
+                              href={`/shop/${product.id}`}
                               className="flex flex-col gap-2 p-3 rounded-lg bg-card hover:bg-accent transition-colors border border-border"
                               onClick={() => setIsExpanded(false)}
                             >
@@ -209,7 +208,7 @@ export function ShoppingAssistant() {
                               </div>
                               {/* AI가 생성한 한국어 설명 */}
                               <p className="text-xs text-muted-foreground line-clamp-1 pt-1 border-t border-border">
-                                {productRec.description}
+                                {product.description}
                               </p>
                             </Link>
                           )

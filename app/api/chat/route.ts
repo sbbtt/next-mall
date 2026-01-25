@@ -170,6 +170,10 @@ AI:`
           const product = products.find(p => p.id === productId)
           return {
             id: productId,
+            name: product?.name || '',
+            image: product?.image || '',
+            price: product?.price || 0,
+            category: product?.category || '',
             description: product?.description.slice(0, 100) || ''
           }
         })
